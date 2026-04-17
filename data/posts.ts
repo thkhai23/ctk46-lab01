@@ -4,6 +4,7 @@ export interface Post {
   excerpt: string;	
   content: string;	
   date: string;	
+  author: string; 
   category: string;	
 }	
 export const posts: Post[] = [	
@@ -23,7 +24,26 @@ export const posts: Post[] = [
     - API Routes tích hợp	
     - Hỗ trợ TypeScript sẵn có`,	
     date: "2025-01-15",	
+    author: "Khai Nguyen",
     category: "Công nghệ",	
+  },
+  {
+    slug: "post-1",
+    title: "Học NextJS từ con số 0",
+    content: "Đây là bài viết chia sẻ cách học NextJS từ cơ bản đến nâng cao.",
+    excerpt: "Học NextJS từ con số 0 - Hướng dẫn chi tiết cho người mới bắt đầu.",
+    date: "2025-01-10",
+    author: "Khai Nguyen",
+    category: "Công nghệ",
+  },
+{
+    slug: "post-2",
+    title: "Kinh nghiệm học lập trình",
+    content: "Một số kinh nghiệm giúp bạn học lập trình hiệu quả hơn.",
+    excerpt: "Kinh nghiệm học lập trình - Những bài học rút ra sau 3 năm tự học.",
+    date: "2025-01-12",
+    author: "Khai Nguyen",
+    category: "Học tập",
   },
   {	
     slug: "hoc-tailwind-css",	
@@ -45,6 +65,7 @@ rgba(0,0,0,0.1); }
     - Không cần chuyển qua lại giữa file HTML và CSS	
     - File CSS cuối cùng rất nhỏ (chỉ chứa class đã dùng)`,	
     date: "2025-01-20",	
+    author: "Khai Nguyen",
     category: "Công nghệ",	
   },	
   {	
@@ -66,6 +87,7 @@ rgba(0,0,0,0.1); }
     3. Tham gia cộng đồng	
     Tham gia các cộng đồng lập trình để học hỏi và chia sẻ kinh nghiệm.`,	
     date: "2025-02-01",	
+    author: "Khai Nguyen",
     category: "Học tập",	
   },	
 ];	
