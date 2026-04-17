@@ -13,7 +13,8 @@ items-center justify-center">
 	
         <h1 className="text-4xl md:text-5xl font-bold mb-4">	
           Xin chào! Tôi là{" "}	
-          <span className="text-blue-600">Phan Thanh Khải</span>	
+          <span className="- text-blue-600
++ text-violet-600">Phan Thanh Khải</span>	
         </h1>	
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">	
           Sinh viên Công nghệ Thông tin tại Đại học Đà Lạt. Đam mê phát triển	
@@ -65,7 +66,7 @@ hover:text-blue-600 transition-colors"
 	
       {/* CTA section */}	
       <div className="bg-blue-50 rounded-2xl p-8 text-center">	
-        <h2 className="text-2xl font-bold mb-3">Đọc Blog của tôi</h2>	
+        <h2 className="- hover:bg-blue-700 + hover:bg-emerald-700">Đọc Blog của tôi</h2>	
         <p className="text-gray-600 mb-4">	
           Chia sẻ kiến thức và kinh nghiệm về lập trình, công nghệ	
         </p>	
