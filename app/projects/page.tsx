@@ -1,11 +1,38 @@
-import Link from "next/link";
-
-const projects = [
-  { id: "1", name: "Website bán hàng", desc: "HTML, CSS, JS" ,status: "Hoàn thành", tech: ["HTML", "CSS", "JavaScript"],title: "Website bán hàng", description: "Một website bán hàng đơn giản với các tính năng cơ bản."},
-  { id: "2", name: "App quản lý sinh viên", desc: "Java, SQLite" ,status: "Đang thực hiện", tech: ["Java", "SQLite"],title: "App quản lý sinh viên", description: "Một ứng dụng quản lý thông tin sinh viên."},
-  { id: "3", name: "AI Image Generator", desc: "NextJS + API" ,status: "Hoàn thành", tech: ["NextJS", "API"],title: "AI Image Generator", description: "Một công cụ tạo hình ảnh bằng trí tuệ nhân tạo."},
-];
-
+import {	
+  Card,	
+  CardContent,	
+  CardDescription,	
+  CardHeader,	
+  CardTitle,	
+} from "@/components/ui/card";	
+import { Badge } from "@/components/ui/badge";	
+	
+const projects = [	
+  {	
+    title: "Website Portfolio",	
+    description: "Website cá nhân xây dựng bằng Next.JS và Tailwind CSS",	
+    tech: ["Next.JS", "Tailwind CSS", "TypeScript"],	
+    status: "Đang phát triển",	
+  },	
+  {	
+    title: "Ứng dụng Quản lý Công việc",	
+    description: "Ứng dụng Todo App với React và Local Storage",	
+    tech: ["React", "CSS Modules", "JavaScript"],	
+    status: "Hoàn thành",	
+  },	
+  {  title: "API RESTful",	
+    description: "API quản lý sản phẩm với Node.js và Express",	
+    tech: ["Node.js", "Express", "MongoDB"],	
+    status: "Hoàn thành",	
+  },	
+  {	
+    title: "Chat Realtime",	
+    description: "Ứng dụng chat realtime với Socket.IO",	
+    tech: ["React", "Socket.IO", "Node.js"],	
+    status: "Đang phát triển",	
+  },	
+];	
+	
 export default function ProjectsPage() {	
   return (	
     <div className="max-w-5xl mx-auto px-4 py-12">	
@@ -13,38 +40,32 @@ export default function ProjectsPage() {
 	
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">	
         {projects.map((project, index) => (	
-          <div	
-            key={index}	
-            className="border rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col"	
-          >	
-            <div className="flex items-center justify-between mb-2">	
-              <h2 className="text-xl font-semibold">{project.title}</h2>	
-              <span	
-                className={`text-xs px-2 py-1 rounded-full ${	
-                  project.status === "Hoàn thành"	
-                    ? "bg-green-100 text-green-700"	
-                    : "bg-yellow-100 text-yellow-700"	
-                }`}	
-              >	
-                {project.status}	
-              </span>	
-            </div>	
-	
-            <p className="text-gray-600 mb-4 flex-1">{project.description}</p>	
-	
-            <div className="flex flex-wrap gap-2">	
-              {project.tech.map((t) => (	
-                <span	
-                  key={t}	
-                  className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded full"	
+          <Card key={index} className="hover:shadow-md transition-shadow">	
+            <CardHeader>	
+              <div className="flex items-center justify-between">	
+                <CardTitle className="text-lg">{project.title}</CardTitle>	
+                <Badge	
+                  variant={	
+                    project.status === "Hoàn thành" ? "default" : "secondary"	
+                  }	
                 >	
-                  {t}	
-                </span>	
-              ))}	
-            </div>	
-          </div>	
+                  {project.status}	
+                </Badge>	
+              </div>	
+              <CardDescription>{project.description}</CardDescription>	
+            </CardHeader>	
+            <CardContent>	
+              <div className="flex flex-wrap gap-2">	
+                {project.tech.map((t) => (	
+                  <Badge key={t} variant="outline">	
+                    {t}	
+                  </Badge>	
+                ))}	
+              </div>	
+            </CardContent>	
+          </Card>	
         ))}	
       </div>	
-        </div>	
+    </div>	
   );	
-}
+}	

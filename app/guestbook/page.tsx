@@ -3,6 +3,8 @@
 import { useState } from "react";	
 import useSWR from "swr";	
 import { GuestbookEntry } from "@/data/guestbook";	
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 	
 const fetcher = (url: string) => fetch(url).then((res) => res.json());	
 	
@@ -58,8 +60,6 @@ export default function GuestbookPage() {
 	
   // Xử lý xóa lời nhắn	
   async function handleDelete(id: string) {	
-    if (!confirm("Bạn có chắc muốn xóa lời nhắn này?")) return;	
-	
     setDeletingIds((prev) => new Set(prev).add(id));	
     try {	
       const res = await fetch(`/api/guestbook/${id}`, {	
@@ -163,20 +163,49 @@ transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               className="border rounded-lg p-4 hover:shadow-sm transition-shadow"	
             >	
               <div className="flex items-center justify-between mb-2">	
-                <span className="font-semibold text-gray-800">	
-                  {entry.name}	
-                </span>	
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="text-xs font-semibold">{entry.name.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="font-semibold text-gray-800">	
+                    {entry.name}	
+                  </span>	
+                </div>
                 <div className="flex items-center gap-3">	
                   <span className="text-xs text-gray-400">	
                     {new Date(entry.createdAt).toLocaleDateString("vi-VN")}	
                   </span>	
-                  <button	
-                    onClick={() => handleDelete(entry.id)}	
-                    disabled={deletingIds.has(entry.id)}	
-                    className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
-                  >	
-                    {deletingIds.has(entry.id) ? "Đang xóa..." : "Xóa"}	
-                  </button>	
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button	
+                        disabled={deletingIds.has(entry.id)}	
+                        className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
+                      >	
+                        {deletingIds.has(entry.id) ? "Đang xóa..." : "Xóa"}	
+                      </button>	
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Xác nhận xóa</DialogTitle>
+                        <DialogDescription>
+                          Bạn có chắc muốn xóa lời nhắn này?
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <button className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">Hủy</button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <button 
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors" 
+                            onClick={() => handleDelete(entry.id)}
+                          >
+                            Xóa
+                          </button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>	
               </div>	
               <p className="text-gray-600">{entry.message}</p>	
