@@ -28,11 +28,28 @@ async function getUser(userId: number): Promise<User> {
 	
   return res.json();	
 }	
-	
+	async function getComments(id: string) {
+  const res = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${id}/comments`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Không thể tải comments");
+  }
+
+  return res.json();
+}
 export default async function BlogPostPage({ params }: BlogPostPageProps) {	
   const { id } = await params;	
-  const post = await getPost(id);	
-  const author = await getUser(post.userId);	
+ const post = await getPost(id);
+
+const [author, comments] = await Promise.all([
+  getUser(post.userId),
+  getComments(id),
+]);	
 	
   return (	
     <div>	

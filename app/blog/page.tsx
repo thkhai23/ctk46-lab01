@@ -10,6 +10,20 @@ async function getPosts(): Promise<Post[]> {
 	
   return res.json();	
 }	
+async function getComments(id: string) {
+  const res = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${id}/comments`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Không thể tải comments");
+  }
+
+  return res.json();
+}
 export default async function BlogPage() {	
   const posts = await getPosts();	
 	
