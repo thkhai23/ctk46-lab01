@@ -2,6 +2,7 @@
 	
 import { useActionState } from "react";	
 import { createGuestbookEntry, ActionState } from "@/app/guestbook/actions";	
+import SubmitButton from "@/components/submit-button";	
 	
 const initialState: ActionState = {	
   success: false,	
@@ -59,14 +60,7 @@ focus:ring-2 focus:ring-blue-500 resize-none"
         )}	
       </div>	
 	
-      <button	
-        type="submit"	
-        disabled={isPending}	
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 
-transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
-      >	
-        {isPending ? "Đang gửi..." : "Gửi lời nhắn"}	
-      </button>	
+      <SubmitButton isPending={isPending} pendingText="Đang gửi...">Gửi lời nhắn</SubmitButton>	
 	
       {state.success && (	
         <p className="text-green-600 text-sm">Gửi lời nhắn thành công!</p>	

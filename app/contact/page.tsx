@@ -2,6 +2,7 @@
 	
 import { useActionState } from "react";	
 import { sendContactMessage, ContactFormState } from "./actions";	
+import SubmitButton from "@/components/submit-button";	
 	
 const initialState: ContactFormState = {	
   success: false,	
@@ -59,9 +60,15 @@ text-center">
               <h3 className="text-green-700 font-semibold text-lg mb-2">	
                 Gửi thành công!	
               </h3>	
-              <p className="text-green-600">	
+              <p className="text-green-600 mb-4">	
                 Cảm ơn bạn đã liên hệ. Tôi sẽ phản hồi sớm nhất có thể.	
               </p>	
+              <button	
+                onClick={() => window.location.reload()}	
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"	
+              >	
+                Gửi tin nhắn khác	
+              </button>	
             </div>	
           ) : (	
             <form action={formAction} className="space-y-4">	
@@ -157,15 +164,7 @@ focus:ring-2 focus:ring-blue-500 resize-none"
                 )}	
               </div>	
 	
-              <button	
-                type="submit"	
-                disabled={isPending}	
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg 
-hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not
-allowed"	
-              >	
-                {isPending ? "Đang gửi..." : "Gửi tin nhắn"}	
-              </button>	
+              <SubmitButton isPending={isPending} pendingText="Đang gửi..." className="w-full py-3">Gửi tin nhắn</SubmitButton>	
             </form>	
           )}	
         </div>	

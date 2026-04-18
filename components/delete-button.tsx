@@ -1,18 +1,29 @@
-"use client";	
+"use client";
 
-import { deleteGuestbookEntry } from "@/app/guestbook/actions";	
+import { useActionState } from "react";
+import { deleteGuestbookEntry, ActionState } from "@/app/guestbook/actions";
 
-export default function DeleteButton({ id }: { id: string }) {	
-async function handleDelete() {	
-if (!confirm("Bạn có chắc muốn xóa lời nhắn này?")) return;	
-await deleteGuestbookEntry(id);	
-}
-return (	
-<button	
-onClick={handleDelete}	
-className="text-xs text-red-400 hover:text-red-600 transition-colors"	
->	
-Xóa	
-</button>	
-);
+const initialState: ActionState = { success: false };
+
+export default function DeleteButton({ id }: { id: string }) {
+  const [state, formAction] = useActionState(
+    async (prevState: ActionState, formData: FormData) => {
+      if (!confirm("Bạn có chắc muốn xóa lời nhắn này?")) {
+        return prevState;
+      }
+      return await deleteGuestbookEntry(id);
+    },
+    initialState
+  );
+
+  return (
+    <form action={formAction} className="inline">
+      <button
+        type="submit"
+        className="text-xs text-red-400 hover:text-red-600 transition-colors"
+      >
+        Xóa
+      </button>
+    </form>
+  );
 }
