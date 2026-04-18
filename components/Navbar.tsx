@@ -6,7 +6,7 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-4 py-4">	
         <div className="flex items-center justify-between">	
           <Link href="/" className="text-xl font-bold text-blue-600">	
-            Thanh Khải 	
+            Thanh Khải nè	
           </Link>	
           <div className="flex gap-6">	
             <Link	
@@ -22,7 +22,7 @@ export default function Navbar() {
               Giới thiệu	
             </Link>	
             <Link	
-              href="/blog"	
+             href="/blog"	
               className="text-gray-600 hover:text-blue-600 transition-colors"	
             >	
               Blog	
@@ -32,6 +32,12 @@ export default function Navbar() {
               className="text-gray-600 hover:text-blue-600 transition-colors"	
             >	
               Dự án	
+            </Link>	
+            <Link	
+              href="/guestbook"	
+              className="text-gray-600 hover:text-blue-600 transition-colors"	
+            >	
+              Lưu bút	
             </Link>	
             <Link	
               href="/contact"	
