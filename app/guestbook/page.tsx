@@ -1,36 +1,33 @@
 "use client";	
 	
-import { useState, useEffect } from "react";	
+import { useState } from "react";	
+import useSWR from "swr";	
 import { GuestbookEntry } from "@/data/guestbook";	
 	
+const fetcher = (url: string) => fetch(url).then((res) => res.json());	
+	
 export default function GuestbookPage() {	
-  const [entries, setEntries] = useState<GuestbookEntry[]>([]);	
-  const [loading, setLoading] = useState(true);	
-  const [error, setError] = useState<string | null>(null);	
+  const { data: entries = [], error, isLoading, mutate } = useSWR(	
+    "/api/guestbook",	
+    fetcher	
+  );	
 	
   // State cho form	
   const [name, setName] = useState("");	
   const [message, setMessage] = useState("");	
   const [submitting, setSubmitting] = useState(false);	
 	
-  // Fetch danh sách lời nhắn	
- async function fetchEntries() {	
-    try {	
-      const res = await fetch("/api/guestbook");	
-      if (!res.ok) throw new Error("Lỗi khi tải dữ liệu");	
-      const data = await res.json();	
-      setEntries(data);	
-    } catch (err) {	
-      setError("Không thể tải sổ lưu bút. Vui lòng thử lại.");	
-    } finally {	
-      setLoading(false);	
-    }	
-  }	
+  // State cho phân trang	
+  const [currentPage, setCurrentPage] = useState(1);	
+  const itemsPerPage = 5;	
 	
-  // Gọi fetchEntries khi component mount	
-  useEffect(() => {	
-    fetchEntries();	
-  }, []);	
+  // State theo dõi ID đang xóa	
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());	
+	
+  // Tính toán phân trang	
+  const totalPages = Math.ceil(entries.length / itemsPerPage);	
+  const startIndex = (currentPage - 1) * itemsPerPage;	
+  const paginatedEntries = entries.slice(startIndex, startIndex + itemsPerPage);	
 	
   // Xử lý gửi lời nhắn mới	
   async function handleSubmit(e: React.FormEvent) {	
@@ -48,10 +45,10 @@ export default function GuestbookPage() {
 	
       if (!res.ok) throw new Error("Lỗi khi gửi lời nhắn");	
 	
-      // Reset form và tải lại danh sách	
       setName("");	
       setMessage("");	
-      await fetchEntries();	
+      setCurrentPage(1);	
+      await mutate();	
     } catch (err) {	
       alert("Không thể gửi lời nhắn. Vui lòng thử lại.");	
     } finally {	
@@ -63,6 +60,7 @@ export default function GuestbookPage() {
   async function handleDelete(id: string) {	
     if (!confirm("Bạn có chắc muốn xóa lời nhắn này?")) return;	
 	
+    setDeletingIds((prev) => new Set(prev).add(id));	
     try {	
       const res = await fetch(`/api/guestbook/${id}`, {	
         method: "DELETE",	
@@ -70,9 +68,15 @@ export default function GuestbookPage() {
 	
       if (!res.ok) throw new Error("Lỗi khi xóa");	
 	
-      await fetchEntries();	
-  } catch (err) {	
+      await mutate();	
+    } catch (err) {	
       alert("Không thể xóa lời nhắn. Vui lòng thử lại.");	
+    } finally {	
+      setDeletingIds((prev) => {	
+        const newSet = new Set(prev);	
+        newSet.delete(id);	
+        return newSet;	
+      });	
     }	
   }	
 	
@@ -128,8 +132,8 @@ focus:ring-2 focus:ring-blue-500 resize-none"
 	
         <button	
           type="submit"	
-          disabled={submitting || !name.trim() || !message.trim()}
-           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 
+          disabled={submitting || !name.trim() || !message.trim()}	
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 
 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
         >	
           {submitting ? "Đang gửi..." : "Gửi lời nhắn"}	
@@ -137,23 +141,23 @@ transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       </form>	
 	
       {/* Danh sách lời nhắn */}	
-      {loading && (	
+      {isLoading && (	
         <div className="text-center py-8 text-gray-500">	
           Đang tải sổ lưu bút...	
         </div>	
       )}	
 	
       {error && (	
-        <div className="text-center py-8 text-red-500">{error}</div>	
+        <div className="text-center py-8 text-red-500">Không thể tải dữ liệu</div>	
       )}	
 	
-      {!loading && !error && (	
+      {!isLoading && !error && (	
         <div className="space-y-4">	
           <p className="text-sm text-gray-400">	
-            {entries.length} lời nhắn	
+            {entries.length} lời nhắn (Trang {currentPage}/{totalPages})	
           </p>	
 	
-          {entries.map((entry) => (	
+          {paginatedEntries.map((entry) => (	
             <div	
               key={entry.id}	
               className="border rounded-lg p-4 hover:shadow-sm transition-shadow"	
@@ -168,10 +172,10 @@ transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   </span>	
                   <button	
                     onClick={() => handleDelete(entry.id)}	
-                    className="text-xs text-red-400 hover:text-red-600 transition
-colors"	
+                    disabled={deletingIds.has(entry.id)}	
+                    className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
                   >	
-                    Xóa	
+                    {deletingIds.has(entry.id) ? "Đang xóa..." : "Xóa"}	
                   </button>	
                 </div>	
               </div>	
@@ -184,8 +188,33 @@ colors"
               Chưa có lời nhắn nào. Hãy là người đầu tiên!	
             </p>	
           )}	
+	
+          {/* Phân trang */}	
+          {totalPages > 1 && (	
+            <div className="flex justify-between items-center mt-8 pt-6 border-t">	
+              <button	
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}	
+                disabled={currentPage === 1}	
+                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
+              >	
+                Trang trước	
+              </button>	
+	
+              <span className="text-sm text-gray-600">	
+                Trang {currentPage} / {totalPages}	
+              </span>	
+	
+              <button	
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}	
+                disabled={currentPage === totalPages}	
+                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"	
+              >	
+                Trang sau	
+              </button>	
+            </div>	
+          )}	
         </div>	
       )}	
     </div>	
-);	
+  );	
 }	
